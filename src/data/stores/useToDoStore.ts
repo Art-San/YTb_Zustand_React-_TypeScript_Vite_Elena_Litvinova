@@ -1,6 +1,7 @@
 import create from 'zustand'
 import { generateId } from '../helpers'
 import { persist, devtools } from 'zustand/middleware'
+import { createStore } from './createStore'
 
 interface Task {
   id: string
@@ -38,71 +39,57 @@ interface ToDoStore {
 // const useReduxStore = create(devtools(redux(reducer, initialState)), , { name, store: storeName3 })
 // const useReduxStore = create(devtools(redux(reducer, initialState)), , { name, store: storeName4 })
 
-export const useToDoStore = create<ToDoStore>(
-  persist(
-    devtools(
-      (set, get) => ({
-        tasks: [],
-        tasksDone: [],
-        createTask: (title) => {
-          const { tasks } = get()
-          console.log('set', set)
+export const useToDoStore = createStore<ToDoStore>(
+  (set, get) => ({
+    tasks: [],
+    tasksDone: [],
+    createTask: (title) => {
+      const { tasks } = get()
+      console.log('set', set)
 
-          const newTask = {
-            id: generateId(),
-            title,
-            createdAt: Date.now()
-          }
+      const newTask = {
+        id: generateId(),
+        title,
+        createdAt: Date.now()
+      }
 
-          set(
-            {
-              tasks: [newTask].concat(tasks)
-            },
-            false,
-            'createTask'
-          )
-        },
-        updateTask: (id: string, title: string) => {
-          const { tasks } = get()
-          set({
-            tasks: tasks.map((task) => ({
-              ...task,
-              title: task.id === id ? title : task.title
-            }))
-          })
-        },
-        removeTask: (id: string) => {
-          const { tasks, tasksDone } = get()
-          set({
-            tasks: tasks.filter((task) => task.id !== id),
-            tasksDone: [...tasksDone].concat(
-              tasks.filter((task) => task.id === id)
-            )
-          })
-        },
-        createTaskDone: () => {
-          const { tasksDone } = get()
-          const newTask = {
-            id: generateId(),
-            title: 'Fake repeated title',
-            createdAt: Date.now()
-          }
+      set({
+        tasks: [newTask].concat(tasks)
+      })
+    },
+    updateTask: (id: string, title: string) => {
+      const { tasks } = get()
+      set({
+        tasks: tasks.map((task) => ({
+          ...task,
+          title: task.id === id ? title : task.title
+        }))
+      })
+    },
+    removeTask: (id: string) => {
+      const { tasks, tasksDone } = get()
+      set({
+        tasks: tasks.filter((task) => task.id !== id),
+        tasksDone: [...tasksDone].concat(tasks.filter((task) => task.id === id))
+      })
+    },
+    createTaskDone: () => {
+      const { tasksDone } = get()
+      const newTask = {
+        id: generateId(),
+        title: 'Fake repeated title',
+        createdAt: Date.now()
+      }
 
-          set({
-            tasksDone: [newTask].concat(tasksDone)
-          })
-        },
-        deleteEverything: () => {
-          set({}, true) // Грохает весь стор
-        }
-      }),
-      { name: 'MyStore' }
-    ),
-    {
-      name: 'tasks' // name of the item in the storage (must be unique)
-      // storage: createJSONStorage(() => sessionStorage) // (необязательно) по умолчанию используется localStorage.
+      set({
+        tasksDone: [newTask].concat(tasksDone)
+      })
+    },
+    deleteEverything: () => {
+      set({}, true) // Грохает весь стор
     }
-  ) //
+  }),
+  'Tasks-Test'
 )
 
 // const unsub2 = useToDoStore.subscribe(state => state.tasks, console.log)
