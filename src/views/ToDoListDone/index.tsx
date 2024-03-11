@@ -8,7 +8,10 @@ import styles from './index.module.scss'
 export const ToDoListDone: React.FC = () => {
   const [tasksDone, createTaskDone, deleteEverything] = useToDoStore(
     (state) => [state.tasksDone, state.createTaskDone, state.deleteEverything],
-    shallow
+    (oldState, newState) =>
+      JSON.stringify(oldState) === JSON.stringify(newState)
+    // Больше про сравнение объектов и массивов https://www.youtube.com/watch?v=rpW1SVLCToM
+    // shallow
   )
 
   console.log(2, 'components render')

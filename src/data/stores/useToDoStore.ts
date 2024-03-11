@@ -1,3 +1,5 @@
+// остановился 34:24
+// Reading/writing state and reacting to changes outside of components
 import create from 'zustand'
 
 import { generateId } from '../helpers'

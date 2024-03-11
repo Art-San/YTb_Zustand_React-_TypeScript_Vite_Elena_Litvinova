@@ -22,7 +22,10 @@ export const ToDoList: React.FC<ToDoListProps> = ({
       state.updateTask,
       state.removeTask
     ],
-    shallow
+    (oldState, newState) =>
+      JSON.stringify(oldState) === JSON.stringify(newState)
+    // Больше про сравнение объектов и массивов https://www.youtube.com/watch?v=rpW1SVLCToM
+    // shallow
   )
 
   console.log(1, `${mainTitle} component render`)
